@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ToDo Telegram - Manage your tasks efficiently and get notifications via Telegram" />
+  <meta name="theme-color" content="#111827" />
+  <title>Login | ToDo Telegram</title>
+  <!-- Preload critical assets -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <!-- Core stylesheets -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="design-system.css">
+  <link rel="stylesheet" href="/modern.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    :root {
+      --animation-duration: 0.5s;
+      --card-bg-opacity: 0.85;
+      --card-border-opacity: 0.15;
+      --input-bg-opacity: 0.9;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-image: linear-gradient(135deg, var(--bg-dark) 0%, #1a202c 100%);
+      background-attachment: fixed;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background pattern overlay */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+      z-index: -1;
+    }
+
+    body.dark-mode {
+      background-image: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 450px;
+      padding: var(--spacing-md);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Glass card effect */
+    .card {
+      border: 1px solid rgba(255, 255, 255, var(--card-border-opacity));
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 0 15px 35px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: rgba(13, 17, 23, var(--card-bg-opacity));
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Gradient border effect */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(79, 70, 229, 0.15), transparent);
+      transform: rotate(45deg);
+      pointer-events: none;
+      z-index: 0;
+      animation: shimmer 6s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) rotate(45deg);
+      }
+
+      100% {
+        transform: translateX(100%) rotate(45deg);
+      }
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+      padding: var(--spacing-xl) !important;
+    }
+
+    /* Enhanced logo with 3D effect */
+    .app-logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: var(--spacing-lg);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-2xl);
+      color: white;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3), 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-logo::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: skewX(-20deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% {
+        left: -100%;
+      }
+
+      100% {
+        left: 100%;
+      }
+    }
+
+    .app-logo:hover {
+      transform: scale(1.08) rotate(5deg);
+      box-shadow: 0 12px 20px rgba(79, 70, 229, 0.4), 0 6px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Enhanced form controls with floating labels */
+    .form-control {
+      background-color: rgba(13, 17, 23, var(--input-bg-opacity));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) inset;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .form-control:focus {
+      background-color: rgba(13, 17, 23, 0.95);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1) inset;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus::placeholder {
+      opacity: 0.7;
+      transform: translateX(5px);
+    }
+
+    .input-group {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .input-group:focus-within {
+      transform: translateY(-2px);
+    }
+
+    .input-group-text {
+      background-color: rgba(13, 17, 23, var(--input-bg-opacity));
+      border-color: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      transition: all 0.3s ease;
+    }
+
+    /* Modern gradient buttons with hover effects */
+    .btn-primary {
+      background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+      border: none;
+      color: white;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 10px rgba(46, 160, 67, 0.3);
+    }
+
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2ea043 0%, #3fb950 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(46, 160, 67, 0.4);
+    }
+
+    .btn-primary:hover::after {
+      animation: btn-shine 1.5s infinite;
+    }
+
+    @keyframes btn-shine {
+      0% {
+        left: -100%;
+      }
+
+      100% {
+        left: 100%;
+      }
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(46, 160, 67, 0.4);
+    }
+
+    .btn-outline {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: transparent;
+      color: var(--primary);
+      transition: all 0.3s ease;
+      padding: 12px 20px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .btn-outline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 100%;
+      background-color: rgba(79, 70, 229, 0.1);
+      transition: all 0.3s ease;
+      z-index: -1;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline:hover::before {
+      width: 100%;
+    }
+
+    /* Enhanced links and text styles */
+    a {
+      color: var(--primary);
+      transition: all 0.3s ease;
+      position: relative;
+      text-decoration: none;
+    }
+
+    a:not(.btn)::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background-color: var(--primary-hover);
+      transition: width 0.3s ease;
+    }
+
+    a:not(.btn):hover::after {
+      width: 100%;
+    }
+
+    .form-label {
+      color: var(--text-primary-dark);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      transition: all 0.3s ease;
+    }
+
+    .input-group:focus-within .form-label {
+      color: var(--primary);
+    }
+
+    a:hover {
+      color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .footer-text {
+      color: #8b949e;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    /* Enhanced error message */
+    #error-message {
+      color: #f85149;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      background-color: rgba(248, 81, 73, 0.15);
+      border-left: 3px solid #f85149;
+      display: none;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      box-shadow: 0 2px 8px rgba(248, 81, 73, 0.1);
+      transform: translateY(0);
+      transition: all 0.3s ease;
+    }
+
+    #error-message:not(:empty) {
+      display: block;
+      animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shake {
+
+      10%,
+      90% {
+        transform: translateX(-1px);
+      }
+
+      20%,
+      80% {
+        transform: translateX(2px);
+      }
+
+      30%,
+      50%,
+      70% {
+        transform: translateX(-3px);
+      }
+
+      40%,
+      60% {
+        transform: translateX(3px);
+      }
+    }
+
+    /* Enhanced badges */
+    .badge {
+      padding: 0.4em 0.8em;
+      font-size: 0.75em;
+      font-weight: 600;
+      border-radius: 50rem;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .badge:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
+    }
+
+    .badge-primary {
+      background-color: rgba(79, 70, 229, 0.2);
+      color: var(--primary);
+      border: 1px solid rgba(79, 70, 229, 0.3);
+    }
+
+    .badge-secondary {
+      background-color: rgba(46, 160, 67, 0.2);
+      color: #2ea043;
+      border: 1px solid rgba(46, 160, 67, 0.3);
+    }
+
+    /* Enhanced card backgrounds */
+    .bg-card-dark {
+      background-color: rgba(22, 27, 34, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .bg-card-dark:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Enhanced animations */
+    .fade-in {
+      animation: fadeIn var(--animation-duration) ease-in-out;
+    }
+
+    .slide-in-left {
+      animation: slideInLeft var(--animation-duration) ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        transform: translateX(-20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Enhanced form transitions */
+    #getOtp,
+    #putOtp {
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+    /* Hide the second form initially */
+    #putOtp {
+      display: none;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    #putOtp.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Enhanced spinner for loading state */
+    .spinner-border {
+      display: none;
+      width: 1rem;
+      height: 1rem;
+      margin-right: 0.5rem;
+      border-width: 0.15em;
+      animation: spinner-border 0.75s linear infinite;
+    }
+
+    /* Enhanced dark mode toggle */
+    .dark-mode-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(13, 17, 23, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 1.25rem;
+      z-index: 10;
+      transition: all 0.3s ease;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark-mode-toggle:hover {
+      color: var(--primary);
+      transform: rotate(15deg) scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Small text styling */
+    small.text-muted {
+      opacity: 0.8;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    .input-group:focus-within small.text-muted {
+      opacity: 1;
+    }
+  </style>
+  <script type="text/javascript" src="script.js" defer></script>
+  <style>
+    /* Additional styles for new features */
+    .particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 8px rgba(46, 160, 67, 0.3);
+      flex-shrink: 0;
+    }
+
+    .otp-timer {
+      font-size: 0.85rem;
+      color: var(--text-secondary-dark);
+    }
+
+    #countdown {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 576px) {
+      .card-content {
+        padding: var(--spacing-md) !important;
+      }
+
+      .login-container {
+        padding: var(--spacing-sm);
+      }
+
+      .app-logo {
+        width: 70px;
+        height: 70px;
+      }
+    }
+  </style>
+</head>
+
+<body class="animate__animated animate__fadeIn">
+  <div class="particles-container" id="particles-js"></div>
+
+  <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
+    <i class="bi bi-moon-stars"></i>
+  </button>
+
+  <div class="login-container">
+    <div class="card animate__animated animate__fadeIn animate__delay-1s">
+      <div class="card-content">
+        <div class="app-logo animate__animated animate__bounceIn animate__delay-1s">
+          <i class="bi bi-check2-all"></i>
+        </div>
+        <h3 class="text-center mb-4 animate__animated animate__fadeIn animate__delay-2s" style="color: #ffffff;">Welcome
+          Back</h3>
+        <div id="error-message" class="text-center animate__animated animate__headShake"></div>
+
+        <form id="getOtp" method="post" class="animate__animated animate__fadeInUp animate__delay-2s">
+          <div class="form-group mb-4">
+            <label class="form-label d-flex align-items-center" for="email">
+              <i class="bi bi-envelope me-2"></i>Email address
+            </label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-at"></i></span>
+              <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required
+                autocomplete="email" />
+            </div>
+            <div class="invalid-feedback">Please enter a valid email address</div>
+            <small class="text-muted mt-2 d-block">
+              <p style="color: #ffffff;">We'll send a one-time password to this email</p>
+            </small>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mt-4 d-flex align-items-center justify-content-center">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" id="otpSpinner"></span>
+            <i class="bi bi-envelope-paper me-2"></i> Get OTP
+          </button>
+        </form>
+
+        <div class="text-center mt-4 mb-3 animate__animated animate__fadeIn animate__delay-3s">
+          <span class="badge badge-primary"><i class="bi bi-shield-lock me-1"></i><lable style="color: #ffffff;">Secure Authentication</lable></span>
+        </div>
+
+        <form id="putOtp" method="post" class="animate__animated animate__fadeInUp">
+          <div class="form-group mb-4">
+            <label class="form-label d-flex align-items-center" for="otp">
+              <i class="bi bi-key me-2"></i>One-Time Password
+            </label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter 6-digit code" maxlength="6"
+                required autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+            </div>
+            <div class="invalid-feedback">Please enter a valid 6-digit OTP</div>
+            <div class="otp-timer mt-2 text-center">
+              <small class="text-muted">Code expires in <span id="countdown">05:00</span></small>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mt-4 d-flex align-items-center justify-content-center">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"
+              id="loginSpinner"></span>
+            <i class="bi bi-box-arrow-in-right me-2"></i> Login
+          </button>
+        </form>
+
+        <div
+          class="d-flex justify-content-between align-items-center mt-4 animate__animated animate__fadeIn animate__delay-3s">
+          <p class="mb-0 text-muted">
+            <i class="bi bi-stars me-1"></i><lable style="color: #ffffff;">New user?</lable>
+          </p>
+          <a href="signup" class="btn btn-outline">
+            <i class="bi bi-person-plus me-1"></i><lable style="color: #ffffff;"> Create Account</lable>
+          </a>
+        </div>
+
+        <div class="mt-4 p-4 bg-card-dark rounded-lg animate__animated animate__fadeIn animate__delay-4s">
+          <div class="d-flex align-items-center mb-2">
+            <div class="feature-icon me-3">
+              <i class="bi bi-telegram"></i>
+            </div>
+            <div>
+              <span class="badge badge-secondary mb-2"><i class="bi bi-bell me-1"></i>NEW</span>
+              <h5 class="mb-1"><lable style="color: #ffffff;">Task reminders via Telegram</lable></h5>
+              <small class="text-muted"><lable style="color: #ffffff;">Get notified about your tasks directly in Telegram</lable></small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-3 footer-text animate__animated animate__fadeIn animate__delay-4s">
+      <small>&copy; 2023 ToDo Telegram. All rights reserved.</small>
+    </div>
+  </div>
+
+  <!-- Particles.js for background effects -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize particles.js
+      if (typeof particlesJS !== 'undefined') {
+        particlesJS('particles-js', {
+          particles: {
+            number: { value: 80, density: { enable: true, value_area: 800 } },
+            color: { value: '#4f46e5' },
+            shape: { type: 'circle' },
+            opacity: { value: 0.1, random: true },
+            size: { value: 3, random: true },
+            line_linked: { enable: true, distance: 150, color: '#4f46e5', opacity: 0.1, width: 1 },
+            move: { enable: true, speed: 1, direction: 'none', random: true, straight: false, out_mode: 'out' }
+          },
+          interactivity: {
+            detect_on: 'canvas',
+            events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' } },
+            modes: { grab: { distance: 140, line_linked: { opacity: 0.3 } } }
+          },
+          retina_detect: true
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

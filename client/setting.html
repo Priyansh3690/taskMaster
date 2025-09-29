@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | ToDo Telegram</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/design-system.css">
+    <link rel="stylesheet" href="/modern.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/enhanced-ui.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="/setting.js" defer></script>
+    <script src="/sessioncheck.js"></script>
+    <script src="/username.js"></script>
+</head>
+
+<body class="app-layout">
+
+    <div class="overlay"></div>
+
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <div class="brand">📝 TaskMaster</div>
+
+            <div class="nav-section">
+                <a href="/d/home" class="nav-link active animate__animated animate__fadeIn">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">Home</span>
+                </a>
+                <a href="/d/task" class="nav-link animate__animated animate__fadeIn" style="animation-delay: 0.1s">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">Tasks</span>
+                </a>
+                <!-- <a href="#" class="nav-link animate__animated animate__fadeIn" style="animation-delay: 0.2s">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-text">Messages</span>
+                </a> -->
+                <a href="/d/setting" class="nav-link animate__animated animate__fadeIn" style="animation-delay: 0.2s">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Setting</span>
+                </a>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-header">📅 Recent Dates</div>
+            <div class="date-list animate__animated animate__fadeIn" id="dateList" style="animation-delay: 0.4s">
+
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="profile-info">
+                    <div class="profile-name" id="userName"></div>
+                    <div class="profile-status">Online</div>
+                </div>
+            </div>
+            <form id="log" method="post">
+                <!-- <button type="submit" id="logout" class="btn-icon logout" name="Logout" title="Logout">
+          <span>⏻</span>
+        </button> -->
+                <button type="submit" id="logout" class="btn-icon logout" name="Logout" title="Logout">
+                    <i class="fas fa-power-off"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="main-header">
+            <button class="hamburger btn-icon" aria-label="Toggle menu">☰</button>
+            <h1 class="page-title animate__animated animate__fadeIn">Settings</h1>
+            <div class="header-actions">
+                <!-- <button class="btn-icon" title="Notifications">
+          <span>🔔</span>
+        </button>
+        <button class="btn-icon" title="Search">
+          <span>🔍</span>
+        </button> -->
+            </div>
+        </div>
+
+
+        <div class="main-content">
+            <div class="container-fluid p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="page-title">Settings</h1>
+                    <!-- <button class="btn btn-icon" id="toggle-sidebar">
+                        <i class="bi bi-layout-sidebar"></i>
+                    </button> -->
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="settings-card animate__animated animate__fadeIn">
+                            <div class="settings-section">
+                                <h2 class="settings-section-title"><span>📱</span> Telegram Integration</h2>
+
+                                <div class="setting-item">
+                                    <div class="setting-item-content">
+                                        <h3 class="setting-item-title">Chat ID</h3>
+                                        <p class="setting-item-description">Your Telegram Chat ID for notifications</p>
+                                    </div>
+                                    <div class="setting-item-control">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="chatId"
+                                                placeholder="Your Telegram Chat ID" value="" readonly>
+                                            <button class="btn btn-primary" id="checkMessage">Check Message</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="setting-item">
+                                    <div class="setting-item-content">
+                                        <h3 class="setting-item-title">Notification Status</h3>
+                                        <p class="setting-item-description">Enable or disable Telegram notifications</p>
+                                    </div>
+                                    <div class="setting-item-control">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="telegramEnabled"
+                                                checked>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+
+                        <!-- Other settings sections can be added here -->
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="settings-card animate__animated animate__fadeIn" style="animation-delay: 0.2s">
+                            <div class="settings-section">
+                                <h2 class="settings-section-title"><span>ℹ️</span> Help & Information</h2>
+
+                                <div class="info-box mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="badge bg-info me-2">Telegram Setup</span>
+                                    </div>
+                                    <ol class="mb-0 ps-3">
+                                        <li>Start a chat with <strong>@To_DoReminder_bot</strong></li>
+                                        <li>Enter your Chat ID above</li>
+                                        <li>Click "Check Message" to verify</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const sidebar = document.querySelector('.sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            const overlay = document.querySelector('.overlay');
+
+            hamburger.addEventListener('click', () => {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            });
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Today's Tasks | ToDo Telegram</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/design-system.css">
+    <link rel="stylesheet" href="/modern.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/enhanced-ui.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/sessioncheck.js"></script>
+    <script src="/todayTask.js"></script>
+    <script src="/username.js"></script>
+    <style>
+        .task-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .filter-label {
+            font-size: var(--text-sm);
+            color: var(--text-muted-dark);
+            margin-bottom: 0;
+        }
+
+        .task-section {
+            margin-bottom: var(--spacing-xl);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .task-count {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-size: var(--text-xs);
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: var(--spacing-sm);
+        }
+
+        .task-card {
+            background-color: var(--bg-card-dark);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--spacing-md);
+            overflow: hidden;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-dark);
+            transition: background-color var(--transition-fast);
+        }
+
+        .task-item:hover {
+            background-color: var(--bg-hover-dark);
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            position: relative;
+            margin-right: var(--spacing-md);
+        }
+
+        .task-checkbox input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .task-checkbox label {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .task-checkbox input:checked+label::after {
+            content: '✓';
+            position: absolute;
+            top: 0;
+            left: 4px;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-xs);
+            color: var(--text-muted-dark);
+        }
+
+        .task-due {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .task-category {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: var(--text-xs);
+        }
+
+        .category-work {
+            background-color: rgba(79, 70, 229, 0.2);
+            color: #818cf8;
+        }
+
+        .category-personal {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .category-other {
+            background-color: rgba(249, 115, 22, 0.2);
+            color: #fb923c;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--text-muted-dark);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        /* Modal customizations */
+        .modal-content {
+            background-color: var(--bg-card-dark);
+            border: none;
+            border-radius: var(--radius-lg);
+        }
+
+        .modal-header,
+        .modal-footer {
+            border: none;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .edit-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .edit-popup .popup-content {
+            background: var(--card-bg, #1e293b);
+            color: #f1f5f9;
+            padding: 20px;
+            border-radius: 16px;
+            width: 380px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            animation: slideUp 0.3s ease-in-out;
+        }
+
+        .edit-popup h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary, #4f46e5);
+            text-align: center;
+        }
+
+        .edit-popup input,
+        .edit-popup textarea,
+        .edit-popup select {
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f8fafc;
+            font-size: 14px;
+            transition: border 0.2s;
+        }
+
+        .edit-popup input:focus,
+        .edit-popup textarea:focus,
+        .edit-popup select:focus {
+            border-color: var(--primary, #4f46e5);
+            outline: none;
+        }
+
+        .edit-popup .popup-actions {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .edit-popup .popup-actions button {
+            margin-left: 10px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .edit-popup .popup-actions #cancelEdit {
+            background: #475569;
+            color: #f1f5f9;
+        }
+
+        .edit-popup .popup-actions #cancelEdit:hover {
+            background: #64748b;
+        }
+
+        .edit-popup .popup-actions #updateTask {
+            background: var(--primary, #4f46e5);
+            color: #fff;
+        }
+
+        .edit-popup .popup-actions #updateTask:hover {
+            background: var(--primary-hover, #4338ca);
+        }
+
+        .edit-popup .popup-actions #updateTask:focus {
+            outline: none;
+            box-shadow: 0 0 8px var(--primary, #4f46e5);
+        }
+
+        /* Make sure SweetAlert always stays on top */
+        .swal2-container.swal-z-top {
+            z-index: 20000 !important;
+        }
+
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="app-layout">
+
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <div class="brand">📝 ToDo Telegram</div>
+
+            <div class="nav-section">
+                <a href="/d/home" class="nav-link animate__animated animate__fadeIn">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">Home</span>
+                </a>
+                <a href="/d/task" class="nav-link active animate__animated animate__fadeIn"
+                    style="animation-delay: 0.1s">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">Tasks</span>
+                </a>
+                <!-- <a href="#" class="nav-link animate__animated animate__fadeIn" style="animation-delay: 0.2s">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-text">Messages</span>
+                </a> -->
+                <a href="/d/setting" class="nav-link animate__animated animate__fadeIn" style="animation-delay: 0.2s">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Setting</span>
+                </a>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-header">📅 Recent Dates</div>
+            <div class="date-list animate__animated animate__fadeIn" id="dateList" style="animation-delay: 0.4s">
+
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="profile-info">
+                    <div class="profile-name" id="userName"></div>
+                    <div class="profile-status">Online</div>
+                </div>
+            </div>
+            <button type="submit" id="logout" class="btn-icon logout" name="Logout" title="Logout">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <div class="main-header">
+            <button class="hamburger btn-icon" aria-label="Toggle menu">☰</button>
+            <h1 class="page-title animate__animated animate__fadeIn">Today's Tasks</h1>
+            <div class="header-actions">
+                <button class="btn-icon" title="Notifications">
+                    <span>🔔</span>
+                </button>
+                <button class="btn-icon" title="Search">
+                    <span>🔍</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Task Filter Bar -->
+        <div class="task-filter-bar animate__animated animate__fadeIn">
+            <!-- <div class="filter-group">
+                <label class="filter-label">View:</label>
+                <select class="form-select form-select-sm" id="dropdownList1">
+                    <option selected value="all">All Tasks</option>
+                    <option value="penTask">Pending Tasks</option>
+                    <option value="comTask">Completed Tasks</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Category:</label>
+                <select class="form-select form-select-sm" id="FilterDisCategory">
+                    <option selected value="all">All Categories</option>
+                </select>
+            </div> -->
+
+            <div class="ms-auto">
+                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <span>+</span> Category
+                </button>
+                <button class="btn btn-primary btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                    <span>+</span> Task
+                </button>
+            </div>
+        </div>
+
+        <!-- Work Section -->
+        <div id="taskContainer"></div>
+
+
+        <!-- Empty State (hidden by default) -->
+        <div class="empty-state" style="display: none;">
+            <div class="empty-state-icon">📋</div>
+            <h3>No tasks found</h3>
+            <p>There are no tasks matching your current filters.</p>
+            <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                Create a new task
+            </button>
+        </div>
+    </div>
+    <!-- Add categories -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content bg-dark text-white rounded-4 shadow-lg">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Create New Category</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <div class="mb-3">
+                            <label class="form-label">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary"
+                                id="categoryName" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="categoryForm" class="btn btn-success">Create Category</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addTaskModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark text-white rounded-4 shadow-lg">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Create New Task</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="error"></p><br>
+                    <form id="taskAddForm" method="post">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label">Task Title</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary"
+                                        id="title" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control bg-dark text-white border-secondary" id="description"
+                                        rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select bg-dark text-white border-secondary" id="categoryDis">
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="taskAddForm" class="btn btn-primary">Create Task</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="taskDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white rounded-4 shadow-lg">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Task Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="task-category category-work px-3 py-1 rounded-pill">Work</div>
+                        <div class="badge bg-danger">High Priority</div>
+                    </div>
+                    <h4 class="mb-3">Prepare Q3 Report</h4>
+                    <div class="d-flex flex-wrap gap-3 text-muted mb-4">
+                        <div style="color: #ffffff;"><span>📅</span> Created on Aug 15, 2023</div>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="text-primary">Description</h6>
+                        <p>Compile all Q3 metrics and prepare the quarterly report for the management team. Include
+                            sales figures, marketing ROI, and customer acquisition costs.</p>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-danger" id="deleteTaskBtn">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="editTaskBtn">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.querySelector('.sidebar');
+        const hamburger = document.querySelector('.hamburger');
+        const overlay = document.querySelector('.overlay');
+
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        // Task section expand/collapse
+        document.querySelectorAll('.task-header .btn-icon').forEach(button => {
+            button.addEventListener('click', function () {
+                const section = this.closest('.task-section');
+                const card = section.querySelector('.task-card');
+                const icon = this.querySelector('span');
+
+                if (card.style.display === 'none') {
+                    card.style.display = 'block';
+                    icon.textContent = '▼';
+                    card.classList.add('animate__animated', 'animate__fadeIn');
+                    setTimeout(() => {
+                        card.classList.remove('animate__animated', 'animate__fadeIn');
+                    }, 500);
+                } else {
+                    card.classList.add('animate__animated', 'animate__fadeOut');
+                    icon.textContent = '▶';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                        card.classList.remove('animate__animated', 'animate__fadeOut');
+                    }, 500);
+                }
+            });
+        });
+
+        // Task checkbox animation
+        document.querySelectorAll('.task-checkbox input').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const taskItem = this.closest('.task-item');
+                if (this.checked) {
+                    taskItem.classList.add('completed', 'animate__animated', 'animate__fadeOut');
+                    setTimeout(() => {
+                        taskItem.style.display = 'none';
+                    }, 500);
+                } else {
+                    taskItem.classList.remove('completed');
+                }
+            });
+        });
+
+        // Task item click to show details
+        document.querySelectorAll('.task-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                // Don't trigger if clicking on checkbox or action buttons
+                if (e.target.closest('.task-checkbox') || e.target.closest('.task-actions')) {
+                    return;
+                }
+
+                // Show task details modal
+                const taskDetailsModal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
+                taskDetailsModal.show();
+            });
+        });
+
+        // Repeat task toggle
+        const repeatTaskCheckbox = document.getElementById('repeatTask');
+        const repeatOptions = document.querySelector('.repeat-options');
+
+        if (repeatTaskCheckbox && repeatOptions) {
+            repeatTaskCheckbox.addEventListener('change', function () {
+                if (this.checked) {
+                    repeatOptions.style.display = 'block';
+                    repeatOptions.classList.add('animate__animated', 'animate__fadeIn');
+                } else {
+                    repeatOptions.classList.add('animate__animated', 'animate__fadeOut');
+                    setTimeout(() => {
+                        repeatOptions.style.display = 'none';
+                        repeatOptions.classList.remove('animate__animated', 'animate__fadeOut');
+                    }, 500);
+                }
+            });
+        }
+
+        // Color picker for category
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function () {
+                // Remove active class from all options
+                document.querySelectorAll('.color-option').forEach(opt => {
+                    opt.classList.remove('active');
+                    opt.style.border = 'none';
+                });
+
+                // Add active class to selected option
+                this.classList.add('active');
+                this.style.border = '2px solid white';
+
+                // Set hidden input value
+                document.getElementById('categoryColor').value = this.dataset.color;
+            });
+        });
+
+        // Icon picker for category
+        document.querySelectorAll('.icon-option').forEach(option => {
+            option.addEventListener('click', function () {
+                // Remove active class from all options
+                document.querySelectorAll('.icon-option').forEach(opt => {
+                    opt.classList.remove('active');
+                    opt.style.backgroundColor = '';
+                });
+
+                // Add active class to selected option
+                this.classList.add('active');
+                this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+
+                // Set hidden input value
+                document.getElementById('categoryIcon').value = this.dataset.icon;
+            });
+        });
+
+        // Filter functionality
+        document.querySelectorAll('.task-filter-bar select').forEach(select => {
+            select.addEventListener('change', function () {
+                // Here you would implement actual filtering logic
+                // For demo purposes, we'll just show the empty state if "Completed Tasks" is selected
+                const viewFilter = document.querySelector('.filter-group:first-child select').value;
+                const emptyState = document.querySelector('.empty-state');
+                const taskSections = document.querySelectorAll('.task-section');
+
+                if (viewFilter === 'Completed Tasks') {
+                    taskSections.forEach(section => section.style.display = 'none');
+                    emptyState.style.display = 'flex';
+                } else {
+                    taskSections.forEach(section => section.style.display = 'block');
+                    emptyState.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

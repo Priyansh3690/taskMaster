@@ -1,0 +1,487 @@
+/* Main Styles for ToDo Telegram App - Dashboard */
+/* Using CSS variables from modern.css */
+
+/* Base Layout */
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary-dark);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.15) 0%, transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 25%);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  background-color: var(--bg-card-dark);
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  position: relative;
+  z-index: 10;
+  box-shadow: var(--shadow-lg);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar.hide {
+  transform: translateX(-100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: none;
+  z-index: 150;
+  transition: opacity var(--transition-normal);
+  opacity: 0;
+}
+
+.overlay.show {
+  display: block;
+  opacity: 1;
+}
+
+/* Sidebar Content */
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 5;
+}
+
+.brand {
+  padding: var(--spacing-md) var(--spacing-md);
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--primary-400);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.brand i {
+  font-size: 1.2em;
+  color: var(--primary-300);
+}
+
+.brand::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-400), transparent);
+}
+
+/* Navigation Links */
+.nav-link {
+  color: var(--text-secondary-dark);
+  padding: var(--spacing-xs) var(--spacing-md);
+  margin: var(--spacing-2xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: all var(--transition-fast);
+  font-weight: var(--font-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link i {
+  font-size: 1.2em;
+  width: 24px;
+  text-align: center;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary-dark);
+  transform: translateX(3px);
+}
+
+.nav-link.active {
+  background-color: rgba(79, 70, 229, 0.15);
+  color: var(--primary-300);
+  font-weight: var(--font-semibold);
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: var(--primary-500);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Section Headers */
+.sidebar-header {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-muted-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Date List */
+.date-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-xs) 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.date-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.date-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.date-list::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+}
+
+.date-list::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Date Links */
+.date-link {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-md);
+  margin: var(--spacing-2xs) var(--spacing-sm);
+  font-size: var(--text-sm);
+  color: var(--text-secondary-dark);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.date-link::before {
+  content: '•';
+  margin-right: var(--spacing-xs);
+  color: var(--text-muted-dark);
+  font-size: 1.2em;
+  line-height: 0;
+  transition: color var(--transition-fast);
+}
+
+.date-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary-dark);
+  transform: translateX(3px);
+}
+
+.date-link:hover::before {
+  color: var(--primary-400);
+}
+
+.date-link.active {
+  background-color: rgba(79, 70, 229, 0.15);
+  color: var(--primary-300);
+  font-weight: var(--font-medium);
+}
+
+.date-link.active::before {
+  color: var(--primary-400);
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  position: relative;
+  z-index: 5;
+}
+
+.sidebar-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-input-dark);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  border: 2px solid var(--primary-500);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-pic:hover {
+  transform: scale(1.05);
+  border-color: var(--primary-400);
+}
+
+.profile-pic::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent);
+  transform: skewX(-25deg);
+  animation: shine 6s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+
+  20% {
+    left: 100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+.profile-name {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary-dark);
+  transition: color var(--transition-fast);
+}
+
+.profile-name:hover {
+  color: var(--text-primary-dark);
+}
+
+.logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-xl);
+  color: var(--danger-400);
+  padding: var(--spacing-2xs);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  width: 36px;
+  height: 36px;
+}
+
+.logout:hover {
+  color: var(--danger-300);
+  background-color: rgba(239, 68, 68, 0.1);
+  transform: rotate(15deg);
+}
+
+/* Main Content Area */
+.main {
+  flex: 1;
+  padding: var(--spacing-lg);
+  overflow-y: auto;
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card Component */
+.card {
+  background-color: var(--bg-card-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-md-dark);
+  transition: all var(--transition-normal);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-500), var(--primary-300));
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg-dark);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* Card variations */
+.card.primary {
+  border-left: 4px solid var(--primary-500);
+}
+
+.card.success {
+  border-left: 4px solid var(--success-500);
+}
+
+.card.warning {
+  border-left: 4px solid var(--warning-500);
+}
+
+.card.danger {
+  border-left: 4px solid var(--danger-500);
+}
+
+/* Hamburger Menu */
+.hamburger {
+  display: none;
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  color: var(--text-primary-dark);
+  font-size: var(--text-xl);
+  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-sm-dark);
+}
+
+.hamburger:hover {
+  background: rgba(79, 70, 229, 0.2);
+  color: var(--primary-300);
+  transform: rotate(90deg);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    width: 280px;
+    box-sizing: border-box;
+    padding-bottom: 16px;
+    overflow-y: auto;
+    transition: transform var(--transition-normal) var(--ease-out);
+    transform: translateX(-100%);
+    z-index: var(--z-fixed);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+    left: 0;
+  }
+
+  .hamburger {
+    display: flex;
+    position: fixed;
+    top: var(--spacing-md);
+    left: var(--spacing-md);
+    z-index: var(--z-fixed-plus);
+  }
+
+  .main {
+    padding-left: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+  }
+
+  .card {
+    margin-bottom: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    padding-bottom: 58px;
+    /* give room for footer */
+    overflow-y: auto;
+  }
+
+  .sidebar-footer {
+    padding: 16px;
+  }
+}
