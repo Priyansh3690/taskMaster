@@ -16,7 +16,7 @@ import {
   generateSessionData
 } from "../utils/helper.js";
 
-import { sendOTPEmail } from "../services/emailService.js";
+import { sendTelegramMessage } from "../services/telegramService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,7 +52,8 @@ export const sendOTP = async (req, res) => {
   }
   const otp = generateOTP();
   await SetOTP(otp, check.uid);
-  await sendOTPEmail(check.email, otp);
+  const text=`The OTP is ${otp}`;
+  await sendTelegramMessage(check.chatid, text);
   return res.json({ success: true });
 };
 

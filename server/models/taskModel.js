@@ -2,11 +2,12 @@ import { TIMEOUT } from "dns";
 import dbQuery from "../utils/dbQuery.js";
 
 export const checkUserExists = async (email) => {
-    const result = await dbQuery('SELECT email,uid FROM public."user" WHERE email=$1', [email]);
+    const result = await dbQuery('SELECT email,uid,chatid FROM public."user" WHERE email=$1', [email]);
     return {
         exists: result.rowCount > 0,
         email: result.rowCount > 0 ? result.rows[0].email : null,
-        uid: result.rowCount > 0 ? result.rows[0].uid : null
+        uid: result.rowCount > 0 ? result.rows[0].uid : null,
+        chatid:result.rowCount > 0 ? result.rows[0].chatid : null
     };
 };
 
