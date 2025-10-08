@@ -6,7 +6,7 @@
     },
     "crons": [
         {
-            "path": "server/api/setReminder.js",
+            "path": "/api/setReminder.js",
             "schedule": "15 10 * * *"
         }
     ]
