@@ -1,7 +1,7 @@
 {
     "functions": {
         "api/setReminder.js": {
-            "runtime": "@vercel/node"
+            "runtime": "@vercel/node@1.0.0"
         }
     },
     "crons": [
