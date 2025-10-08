@@ -18,7 +18,7 @@ async function SendNotficTouser() {
     }
 }
 
-cron.schedule("30 9 * * *", SendNotficTouser);
+cron.schedule("1 * * * *", SendNotficTouser);
 // cron.schedule("*/1 * * * *", SendNotficTouser);
 
 export { SendNotficTouser };
