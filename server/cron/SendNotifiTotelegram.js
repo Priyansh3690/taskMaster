@@ -1,6 +1,6 @@
 import cron from "node-cron";
-import { sendTelegramMessage } from '../services/telegramService.js';
-import { GetAllUserIDToSendNoficYesterDayTaskNotCompleted, StoreMessageToDB, GetAllUserIDToSendNoficTaskNotCompleted } from '../models/taskModel.js';
+import { sendTelegramMessage } from '../services/TelegramAutoMessageService.js';
+import { GetAllUserIDToSendNoficYesterDayTaskNotCompleted, StoreMessageToDB } from '../models/taskModel.js';
 
 async function SendNotficTouser() {
     const userInfo = await GetAllUserIDToSendNoficYesterDayTaskNotCompleted();

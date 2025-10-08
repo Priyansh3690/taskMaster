@@ -7,7 +7,7 @@ export const checkUserExists = async (email) => {
         exists: result.rowCount > 0,
         email: result.rowCount > 0 ? result.rows[0].email : null,
         uid: result.rowCount > 0 ? result.rows[0].uid : null,
-        chatid:result.rowCount > 0 ? result.rows[0].chatid : null
+        chatid: result.rowCount > 0 ? result.rows[0].chatid : null
     };
 };
 
@@ -98,7 +98,7 @@ export const taskCompletedOrNotUpdate = async (uid, taskID, completed) => {
 
 export const GetAllUserIDToSendNoficYesterDayTaskNotCompleted = async () => {
     const result = await dbQuery(`SELECT DISTINCT t.uid, t.task, t."taskID", u.chatid FROM public.task t JOIN public.user u ON t.uid = u.uid WHERE t.completed = false AND DATE(t.date_time) = CURRENT_DATE - INTERVAL '1 day';`);
-    return { isRows: result.rowCount > 0, count: result.rowCount > 0 ? result.rowCount : 0, rows: result.rowCount > 0 ? result.rows : 0 }
+    return { isRows: result.rowCount > 0, count: result.rowCount > 0 ? result.rowCount : 0, rows: result.rowCount > 0 ? result.rows : [] }
 };
 export const GetAllUserIDToSendNoficTaskNotCompleted = async () => {
     const result = await dbQuery('SELECT t.uid, t.task, t."taskID", u.chatid FROM public.task t JOIN public.user u ON t.uid = u.uid WHERE t.completed = false ORDER BY t.date_time DESC;');
