@@ -1,0 +1,13 @@
+{
+    "functions": {
+        "server/api/setReminder.js": {
+            "runtime": "nodejs18.x"
+        }
+    },
+    "crons": [
+        {
+            "path": "server/api/setReminder.js",
+            "schedule": "15 10 * * *"
+        }
+    ]
+}
