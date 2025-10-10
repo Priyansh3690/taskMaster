@@ -5,11 +5,11 @@ import { GetAllUserIDToSendNoficYesterDayTaskNotCompleted, StoreMessageToDB } fr
 async function SendNotficTouser() {
     const userInfo = await GetAllUserIDToSendNoficYesterDayTaskNotCompleted();
     if (userInfo.isRows) {
-        userInfo.rows.forEach(async Element => {
+        for (const Element of userInfo.rows) {
             let text = `⏰ Reminder: Your task "${Element.task}" is still incomplete from yesterday. Please take action today!`;
             await StoreMessageToDB(Element.uid, Element.taskID, text);
             await sendTelegramMessage(Element.chatid, text);
-        });
+        };
         console.log("ok Message Done....");
     }
     else {
@@ -18,7 +18,6 @@ async function SendNotficTouser() {
     }
 }
 
-cron.schedule("* 7 * * *", SendNotficTouser);
-// cron.schedule("*/1 * * * *", SendNotficTouser);
+cron.schedule("0 7 * * *", SendNotficTouser);
 
 export { SendNotficTouser };
