@@ -18,6 +18,9 @@ async function SendNotficTouser() {
     }
 }
 
-cron.schedule("0 7 * * *", SendNotficTouser);
+cron.schedule("0 7 * * *", SendNotficTouser, {
+    scheduled: true,
+    timezone: "Asia/Kolkata", 
+});
 
 export { SendNotficTouser };
